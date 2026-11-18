@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 class Product:
     def __init__(self,name,price,quantity):
@@ -85,25 +86,30 @@ class Shop:
             return
         print("1. Normal product")
         print("2. Perishable product")
-        product_type = input("Enter product type: ")
-        if product_type != "1" and product_type != "2":
+        product_type = int(input("Enter product type: "))
+
+        if product_type != 1 and product_type !=2:
             print("Invalid product type")
             return
         name = input("Enter product name: ")
         price = float(input("Enter price: "))
         stock = int(input("Enter stock: "))
-        if product_type == "1":
-            if name == "" or price <= 0 or stock < 0:
+        if name == "" or price <= 0 or stock < 0:
                 print("Invalid product details")
-            else:
+                return
+        if product_type==1:
                 product = Product(name, price, stock)
         else:
-            expiry_date = input("Enter expiry date (YYYY-MM-DD): ")
-            if name == "" or price <= 0 or stock < 0:
-                print("Invalid product details")
-            else:
-                 product = PerishableProduct(name, price, stock, expiry_date)
-                 self.products[product_id] = product
+            expiry_date = input("Enter expiry date (DD-MM-YYYY): ")
+
+            try:
+                datetime.strptime(expiry_date, "%d-%m-%Y")
+            except ValueError:
+                print("Invalid expiry date")
+                return
+            product = PerishableProduct(name, price, stock, expiry_date)
+
+        self.products[product_id] = product
         print("Product added successfully")
     def add_stock(self):
             product_id = int(input("Enter product ID: "))
@@ -113,7 +119,6 @@ class Shop:
                     print("Quantity must be greater than zero")
                 else:
                     self.products[product_id].add_stock(quantity)
-                    print("Stock updated")
             else:
                 print("Product not found")
 
@@ -257,29 +262,31 @@ while True:
     print("8. Sales chart")
     print("0. Exit")
 
-    choice = int(input("Enter your choice: "))
-
-    if choice == 1:
-        shop.view_products()
-    elif choice == 2:
-        shop.add_product()
-    elif choice == 3:
-        shop.add_stock()
-    elif choice == 4:
-        shop.search_product()
-    elif choice == 5:
-        shop.create_bill()
-    elif choice == 6:
-        shop.view_sales()
-    elif choice == 7:
-        shop.analyse_sales()
-    elif choice == 8:
-        shop.sales_chart()
-    elif choice == 0:
-        print("Thank you")
-        break
-    else:
-        print("Invalid choice")
+    try:
+         choice = int(input("Enter your choice: "))
+         if choice == 1:
+              shop.view_products()
+         elif choice == 2:
+              shop.add_product()
+         elif choice == 3:
+              shop.add_stock()
+         elif choice == 4:
+              shop.search_product()
+         elif choice == 5:
+              shop.create_bill()
+         elif choice == 6:
+              shop.view_sales()
+         elif choice == 7:
+              shop.analyse_sales()
+         elif choice == 8:
+              shop.sales_chart()
+         elif choice == 0:
+              print("Thank you")
+              break
+         else:
+            print("Invalid choice")
+    except ValueError:
+         print("Invalid input.")
 
 
 
